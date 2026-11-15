@@ -1,0 +1,556 @@
+<title>Mentor Minutes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: marketplace shell — sticky top bar, centered 1100px column, two-column profile with sticky booking card */
+:root {
+  --bg: #f7f8f6;
+  --surface: #ffffff;
+  --fg: #16201e;
+  --muted: #5f6d69;
+  --line: #e2e7e5;
+  --accent: #0f766e;
+  --accent-ink: #ffffff;
+  --accent-soft: #d8f3ee;
+  --star: #d48806;
+  --good-bg: #e3f6ec; --good-fg: #146c3c;
+  --warn-bg: #fdf2dc; --warn-fg: #7a4e00;
+  --bad-fg: #b42318;
+  --display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1413; --surface: #161e1c; --fg: #eef3f1; --muted: #9aaaa5; --line: #26312e;
+    --accent: #3fd1bd; --accent-ink: #052a25; --accent-soft: #123a35; --star: #f0b43c;
+    --good-bg: #133524; --good-fg: #8be0b0; --warn-bg: #3a2c0c; --warn-fg: #f3cf85; --bad-fg: #ff8a7a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1413; --surface: #161e1c; --fg: #eef3f1; --muted: #9aaaa5; --line: #26312e;
+  --accent: #3fd1bd; --accent-ink: #052a25; --accent-soft: #123a35; --star: #f0b43c;
+  --good-bg: #133524; --good-fg: #8be0b0; --warn-bg: #3a2c0c; --warn-fg: #f3cf85; --bad-fg: #ff8a7a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+a { color: inherit; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+p { margin: 0; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wrap { max-width: 1100px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.demo-bar { background: var(--warn-bg); color: var(--warn-fg); font-size: 13px; }
+.demo-bar .wrap { padding-block: 8px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+.demo-bar button { background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 0; color: inherit; font-size: 13px; }
+
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 20px; padding-block: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 700; font-size: 17px; text-decoration: none; }
+.brand .mark { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 7px; background: var(--accent); color: var(--accent-ink); font-size: 12px; }
+.nav-link { color: var(--muted); text-decoration: none; font-size: 14px; }
+.nav-link:hover, .nav-link.on { color: var(--fg); }
+.spacer { flex: 1; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 9px; padding: 9px 16px; font-size: 14px; font-weight: 500; border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: opacity .15s, border-color .15s; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover:not(:disabled) { opacity: .9; }
+.btn-secondary { background: var(--surface); border-color: var(--line); }
+.btn-secondary:hover { border-color: var(--accent); }
+.btn-danger { background: transparent; border-color: var(--line); color: var(--bad-fg); }
+.btn-lg { padding: 12px 22px; font-size: 15px; }
+.btn-block { width: 100%; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+.chip { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 500; background: var(--surface); cursor: pointer; text-decoration: none; color: var(--muted); }
+.chip.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.input { width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 9px; padding: 9px 12px; font-size: 14px; }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+label.lbl { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+
+main { padding-block: 32px 64px; }
+section + section { margin-top: 48px; }
+
+/* Home */
+.hero { padding-block: 40px 8px; display: grid; gap: 20px; }
+.hero h1 { font-size: clamp(34px, 6vw, 60px); max-width: 15ch; font-weight: 700; }
+.hero p.lede { font-size: 18px; color: var(--muted); max-width: 58ch; }
+.hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.pill { justify-self: start; background: var(--accent-soft); color: var(--accent); border-radius: 999px; font-size: 13px; font-weight: 500; padding: 5px 12px; }
+.grid3 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.niche { padding: 18px 20px; text-decoration: none; display: grid; gap: 4px; }
+.niche:hover, .mcard:hover { border-color: var(--accent); }
+.niche b { font-family: var(--display); font-size: 17px; }
+.steps { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.steps .card { padding: 20px; display: grid; gap: 6px; }
+.steps .n { font-family: var(--display); color: var(--accent); font-weight: 700; }
+.section-head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 14px; gap: 12px; }
+.section-head a { color: var(--accent); font-size: 14px; text-decoration: none; }
+
+/* Mentor card */
+.mcard { padding: 20px; display: flex; flex-direction: column; gap: 12px; text-decoration: none; }
+.mcard .who { display: flex; gap: 12px; align-items: center; min-width: 0; }
+.mcard .who div { min-width: 0; }
+.mcard .name { font-weight: 600; }
+.mcard .co { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mcard .head { font-size: 14px; }
+.mcard .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 4px; font-size: 14px; }
+.avatar { flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-family: var(--display); font-weight: 700; }
+.stars { color: var(--star); letter-spacing: 1px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tags .chip { cursor: default; }
+
+/* Directory */
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+.toolbar .input { max-width: 380px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+/* Profile */
+.profile { display: grid; gap: 40px; grid-template-columns: minmax(0, 1fr) 400px; align-items: start; }
+.profile > * { min-width: 0; }
+.ptop { display: flex; gap: 18px; align-items: center; }
+.ptop h1 { font-size: 34px; }
+.headline { font-size: 20px; margin-top: 22px; }
+.bio { margin-top: 18px; white-space: pre-line; max-width: 65ch; }
+.sess { padding: 16px; display: grid; gap: 4px; }
+.sess .row { display: flex; justify-content: space-between; gap: 12px; font-weight: 500; }
+.review { padding-block: 14px; border-bottom: 1px solid var(--line); display: grid; gap: 4px; }
+.book { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 80px); padding: 20px; display: grid; gap: 14px; }
+.opt { display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 14px; cursor: pointer; }
+.opt.on { border-color: var(--accent); background: var(--accent-soft); }
+.opt input { margin: 0 8px 0 0; accent-color: var(--accent); }
+.days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.day { flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 9px; padding: 7px 11px; font-size: 12px; font-weight: 500; cursor: pointer; }
+.day.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.slot { border: 1px solid var(--line); background: var(--surface); border-radius: 9px; padding: 8px 4px; font-size: 14px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.slot:hover, .day:hover:not(.on) { border-color: var(--accent); }
+.slot.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.bookform { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 16px; }
+.err { color: var(--bad-fg); font-size: 13px; }
+
+/* Checkout */
+.narrow { max-width: 460px; margin: 0 auto; display: grid; gap: 16px; }
+.notice { border-radius: 12px; padding: 12px 16px; font-size: 14px; }
+.notice.warn { background: var(--warn-bg); color: var(--warn-fg); }
+.notice.good { background: var(--good-bg); color: var(--good-fg); }
+.split { display: grid; gap: 6px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; font-variant-numeric: tabular-nums; }
+.split div { display: flex; justify-content: space-between; }
+.cardrow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Booking */
+dl.kv { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px 12px; font-size: 14px; margin: 0; }
+dl.kv dt { color: var(--muted); }
+dl.kv dd { margin: 0; overflow-wrap: anywhere; }
+.badge { margin-left: auto; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 500; background: var(--good-bg); color: var(--good-fg); white-space: nowrap; }
+.rate { display: flex; flex-wrap: wrap; gap: 8px; }
+.rate button { border: 1px solid var(--line); background: var(--surface); border-radius: 9px; padding: 6px 10px; color: var(--star); cursor: pointer; }
+.rate button.on { border-color: var(--star); background: var(--warn-bg); }
+
+/* Dashboard */
+.dash { display: grid; gap: 32px; grid-template-columns: 190px minmax(0, 1fr); align-items: start; }
+.side { display: grid; gap: 2px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 80px); }
+.side button { text-align: left; background: none; border: 0; border-radius: 8px; padding: 8px 12px; font-size: 14px; cursor: pointer; color: var(--muted); }
+.side button.on { background: var(--surface); color: var(--fg); font-weight: 500; }
+.stats { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.stat { padding: 18px; display: grid; gap: 4px; }
+.stat .v { font-family: var(--display); font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.call { padding: 16px; display: grid; gap: 10px; }
+.call .row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+.note { background: var(--bg); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+.list { list-style: none; margin: 0; padding: 0; }
+.list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line); font-size: 14px; }
+.list li:first-child { border-top: 0; }
+.live { padding: 16px 18px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.live code { color: var(--accent); font-size: 13px; overflow-wrap: anywhere; }
+.week { display: grid; gap: 0; }
+.week .d { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; align-items: center; padding-block: 10px; border-top: 1px solid var(--line); font-size: 14px; }
+.week .d:first-child { border-top: 0; }
+.win { display: inline-block; background: var(--accent-soft); color: var(--accent); border-radius: 7px; padding: 3px 10px; font-size: 13px; margin-right: 6px; font-variant-numeric: tabular-nums; }
+.integ { padding: 18px 20px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; align-items: center; }
+.integ > div:first-child { max-width: 52ch; min-width: 0; display: grid; gap: 4px; }
+.ok { background: var(--good-bg); color: var(--good-fg); border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px; text-align: center; font-size: 12px; color: var(--muted); }
+
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; z-index: 20; max-width: calc(100% - 32px); }
+
+@media (max-width: 860px) {
+  .profile, .dash { grid-template-columns: minmax(0, 1fr); }
+  .book, .side { position: static; }
+  .side { display: flex; overflow-x: auto; }
+  .side button { white-space: nowrap; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="demo-bar"><div class="wrap">
+  <span><strong>Demo preview.</strong> Sample mentors and bookings. No real payments or emails.</span>
+  <button type="button" id="resetBtn">Reset demo</button>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="#home"><span class="mark">20</span>Mentor Minutes</a>
+  <a class="nav-link" data-nav="mentors" href="#mentors">Find a mentor</a>
+  <span class="spacer"></span>
+  <a class="nav-link" data-nav="dashboard" href="#dashboard">Mentor dashboard</a>
+  <a class="btn btn-primary" href="#become">Become a mentor</a>
+</div></header>
+
+<main><div class="wrap" id="view"></div></main>
+
+<footer><div class="wrap">Mentor Minutes · Paid 20-minute career calls · Mentors keep 85% of every session</div></footer>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const FEE = 0.15;
+const NICHES = [
+  { slug: "break-into-tech", name: "Break into Tech", tagline: "Career switchers and new grads landing their first tech role." },
+  { slug: "grad-school", name: "Grad School Advice", tagline: "MBA, PhD and Master's applications from people who got in." },
+  { slug: "resume-review", name: "Resume Review", tagline: "Line-by-line edits from people who read hundreds of resumes." },
+  { slug: "product-management", name: "Product Management", tagline: "PM interviews, APM programs and moving into product." },
+  { slug: "design-portfolio", name: "Design Portfolio", tagline: "Portfolio critiques from senior product designers." },
+];
+const MENTORS = [
+  { slug: "maya-chen", name: "Maya Chen", co: "Staff Engineer, ex-Meta", niches: ["break-into-tech", "resume-review"],
+    headline: "I've hired 60+ engineers. Let's make your resume pass the 6-second scan.",
+    bio: "Self-taught engineer turned hiring manager. I now run interviews for infrastructure roles and have reviewed thousands of resumes.\n\nBest for bootcamp grads, career switchers, and new grads who aren't getting callbacks.",
+    sessions: [
+      { id: "s1", title: "20-min resume review", min: 20, price: 45, desc: "Send your resume ahead. You'll leave with concrete line edits and a target-role checklist." },
+      { id: "s2", title: "Mock behavioral interview", min: 30, price: 60, desc: "A realistic behavioral round with direct feedback on your stories." },
+    ],
+    hours: [17, 20], days: [1, 2, 3, 4],
+    reviews: [[5, "Alex", "Rewrote my bullets the same night and got two callbacks that week."], [5, "Jordan", "Worth every cent. Honest, specific, zero fluff."], [4, "Taylor", "Great advice on positioning. Wish we'd had a bit more time!"], [5, "Sam", "Clear framework for what to do next. Already booked a follow-up."]] },
+  { slug: "priya-raman", name: "Priya Raman", co: "Group PM, fintech", niches: ["product-management", "break-into-tech"],
+    headline: "From consultant to PM in 9 months. I'll show you the path I took.",
+    bio: "I run PM hiring for a 40-person product org and mentor associate PMs. I can help you position non-PM experience and pick the right first PM role.",
+    sessions: [{ id: "s3", title: "20-min PM career strategy", min: 20, price: 50, desc: "Positioning, target companies and how to talk about your non-PM experience." }],
+    hours: [12, 15], days: [2, 4, 6],
+    reviews: [[5, "Morgan", "Gave me a 3-step plan I actually followed. Landed an APM interview."], [5, "Casey", "She knows exactly what hiring managers look for."], [4, "Riley", "Very practical, a little fast-paced."]] },
+  { slug: "daniel-okafor", name: "Daniel Okafor", co: "Wharton MBA '24 · Strategy consultant", niches: ["grad-school"],
+    headline: "MBA admissions strategy from someone who read applications on the committee.",
+    bio: "I sat on the student admissions committee and have coached 30+ applicants into top MBA programs. Bring your story, your school list and your scores.",
+    sessions: [{ id: "s4", title: "20-min MBA application gut-check", min: 20, price: 55, desc: "We'll pressure-test your angle and your school list." }],
+    hours: [18, 21], days: [1, 3, 5],
+    reviews: [[5, "Jordan", "Changed my whole essay angle. Got into my first choice."], [5, "Alex", "Super direct, which is what I needed."]] },
+  { slug: "sam-rivera", name: "Sam Rivera", co: "Principal Product Designer", niches: ["design-portfolio"],
+    headline: "Portfolio critique that gets you to the onsite.",
+    bio: "I've reviewed 500+ design portfolios as a hiring manager. Share your link ahead and I'll give honest notes on case-study structure and storytelling.",
+    sessions: [{ id: "s5", title: "20-min portfolio teardown", min: 20, price: 40, desc: "Honest notes on case-study structure and storytelling." }],
+    hours: [9, 12], days: [6, 7, 2],
+    reviews: [[4, "Taylor", "Tough love, but every point was right."], [5, "Casey", "Restructured two case studies and finally got callbacks."]] },
+  { slug: "lena-park", name: "Lena Park", co: "PhD, Stanford · ML Research Scientist", niches: ["grad-school", "break-into-tech"],
+    headline: "Deciding on a PhD? Talk to someone who did one and left academia.",
+    bio: "I can help with choosing advisors, statements of purpose, and whether a PhD is the right move for an industry research career.",
+    sessions: [{ id: "s6", title: "20-min PhD decision call", min: 20, price: 35, desc: "Whether to apply, where, and how to pick an advisor." }],
+    hours: [16, 19], days: [2, 3, 5],
+    reviews: [[5, "Riley", "Saved me from applying to the wrong programs."]] },
+  { slug: "omar-haddad", name: "Omar Haddad", co: "Tech Recruiter, 8 yrs", niches: ["resume-review", "break-into-tech"],
+    headline: "I screen 200 resumes a week. Here's what makes me say yes.",
+    bio: "Agency and in-house recruiter for engineering and data roles. I'll tell you exactly what a recruiter sees in the first pass.",
+    sessions: [{ id: "s7", title: "20-min recruiter screen", min: 20, price: 30, desc: "A mock recruiter screen plus resume feedback." }],
+    hours: [10, 13], days: [1, 2, 3, 4, 5],
+    reviews: [[4, "Morgan", "Useful insider view on how screening really works."], [5, "Sam", "Fixed my LinkedIn headline on the call."], [5, "Alex", "Fast and direct."]] },
+];
+
+const state = { pending: null, booked: [], rated: {}, dashTab: "overview" };
+const SEED_CALLS = [
+  { mentee: "Jordan Lee", email: "jordan@example.com", session: "20-min resume review", price: 45, offsetDays: 1, hour: 18, notes: "Teacher moving into software engineering. Resume attached." },
+  { mentee: "Priya S.", email: "priya.s@example.com", session: "Mock behavioral interview", price: 60, offsetDays: 3, hour: 19, notes: "Onsite at a fintech next week. Want to tighten my conflict story." },
+];
+const PAST = [["Alex Demo", "20-min resume review", 5, 9], ["Taylor Demo", "20-min resume review", 4, 16], ["Sam Demo", "Mock behavioral interview", 5, 23], ["Morgan Demo", "20-min resume review", 0, 30]];
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const money = (n) => "$" + (Number.isInteger(n) ? n : n.toFixed(2));
+const initials = (n) => n.split(/\s+/).slice(0, 2).map((p) => p[0]).join("").toUpperCase();
+const avatar = (n, size = 48) => `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${Math.round(size * 0.36)}px" aria-hidden="true">${initials(n)}</div>`;
+const tz = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "your timezone"; } catch { return "your timezone"; } })();
+const rating = (m) => { const r = m.reviews; return r.reduce((a, x) => a + x[0], 0) / r.length; };
+const starStr = (n) => "★".repeat(n) + "☆".repeat(5 - n);
+const fmtDay = (d) => d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+const fmtTime = (d) => d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+const fmtFull = (d) => d.toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.t); toast.t = setTimeout(() => (t.hidden = true), 2600);
+}
+
+function mentorCard(m) {
+  const nn = m.niches.map((s) => NICHES.find((n) => n.slug === s).name);
+  const from = Math.min(...m.sessions.map((s) => s.price));
+  return `<a class="card mcard" href="#m-${m.slug}">
+    <div class="who">${avatar(m.name)}<div><div class="name">${esc(m.name)}</div><div class="co">${esc(m.co)}</div></div></div>
+    <p class="head">${esc(m.headline)}</p>
+    <div class="tags">${nn.map((n) => `<span class="chip">${n}</span>`).join("")}</div>
+    <div class="foot"><span><span class="stars">★</span> <b>${rating(m).toFixed(1)}</b> <span class="muted">(${m.reviews.length})</span></span><span>from <b>${money(from)}</b></span></div>
+  </a>`;
+}
+const ranked = (list) => [...list].sort((a, b) => (rating(b) * b.reviews.length + 12) / (b.reviews.length + 3) - (rating(a) * a.reviews.length + 12) / (a.reviews.length + 3));
+
+/* ---------- Views ---------- */
+function viewHome() {
+  return `
+  <div class="hero">
+    <span class="pill">20 minutes. Real answers. No cold DMs.</span>
+    <h1>Book a quick call with someone who's already done it.</h1>
+    <p class="lede">Resume reviews, breaking into tech, grad school strategy. Pick a mentor, pick a time, pay once. The calendar invite and video link land in your inbox automatically.</p>
+    <div class="actions"><a class="btn btn-primary btn-lg" href="#mentors">Find a mentor</a><a class="btn btn-secondary btn-lg" href="#become">Get paid to mentor</a></div>
+  </div>
+  <section><div class="section-head"><span class="eyebrow">Pick your niche</span></div>
+    <div class="grid3">${NICHES.map((n) => `<a class="card niche" href="#niche-${n.slug}"><b>${n.name}</b><span class="muted small">${n.tagline}</span></a>`).join("")}</div>
+  </section>
+  <section><div class="section-head"><span class="eyebrow">Top-rated mentors</span><a href="#mentors">See all →</a></div>
+    <div class="grid3">${ranked(MENTORS).slice(0, 3).map(mentorCard).join("")}</div>
+  </section>
+  <section><div class="section-head"><span class="eyebrow">How it works</span></div>
+    <div class="steps">
+      <div class="card"><span class="n">1</span><b>Pick a time</b><span class="muted small">Real availability, synced with the mentor's Google Calendar and shown in your timezone.</span></div>
+      <div class="card"><span class="n">2</span><b>Pay upfront</b><span class="muted small">Secure checkout through Stripe. Full refund if you cancel at least 24 hours ahead.</span></div>
+      <div class="card"><span class="n">3</span><b>Hop on the call</b><span class="muted small">Calendar invite and Google Meet link arrive by email. Leave a review afterwards.</span></div>
+    </div>
+  </section>`;
+}
+
+function viewMentors(niche) {
+  const q = (viewMentors.q || "").toLowerCase();
+  const list = ranked(MENTORS).filter((m) => (!niche || m.niches.includes(niche)) && (!q || (m.name + m.co + m.headline + m.bio).toLowerCase().includes(q)));
+  const n = NICHES.find((x) => x.slug === niche);
+  return `
+  ${n ? `<a class="nav-link small" href="#mentors">← All mentors</a><h1 style="font-size:40px;margin-top:12px">${n.name}</h1><p class="muted" style="font-size:18px;margin-top:8px">${n.tagline}</p>`
+      : `<h1 style="font-size:34px">Find a mentor</h1>`}
+  <form class="toolbar" id="searchForm"><input class="input" id="q" placeholder="Search by name, company, or topic" value="${esc(viewMentors.q || "")}" aria-label="Search mentors"><button class="btn btn-secondary">Search</button></form>
+  <div class="filters"><a class="chip ${!niche ? "on" : ""}" href="#mentors">All</a>${NICHES.map((x) => `<a class="chip ${niche === x.slug ? "on" : ""}" href="#niche-${x.slug}">${x.name}</a>`).join("")}</div>
+  <div class="grid3" style="margin-top:24px">${list.length ? list.map(mentorCard).join("") : `<p class="muted">No mentors match. Try another niche.</p>`}</div>`;
+}
+
+function slotsFor(m, minutes) {
+  const out = {}; const now = new Date(); const earliest = new Date(now.getTime() + 12 * 3600e3);
+  for (let i = 0; i < 14; i++) {
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+    const wd = day.getDay() === 0 ? 7 : day.getDay();
+    if (!m.days.includes(wd)) continue;
+    const list = [];
+    for (let t = m.hours[0] * 60; t + minutes <= m.hours[1] * 60; t += 30) {
+      const s = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 0, t);
+      if (s < earliest) continue;
+      if ((i * 7 + t / 30 + m.slug.length) % 5 === 0) continue; // some slots already taken
+      if (state.booked.some((b) => b.mentor === m.slug && b.start.getTime() === s.getTime())) continue;
+      list.push(s);
+    }
+    if (list.length) out[day.toDateString()] = list;
+  }
+  return out;
+}
+
+const book = { slug: null, sid: null, day: null, slot: null };
+function viewMentor(slug) {
+  const m = MENTORS.find((x) => x.slug === slug);
+  if (!m) return viewMentors();
+  if (book.slug !== slug) Object.assign(book, { slug, sid: m.sessions[0].id, day: null, slot: null });
+  return `
+  <div class="profile">
+    <div>
+      <div class="ptop">${avatar(m.name, 88)}<div><h1>${esc(m.name)}</h1><p class="muted">${esc(m.co)}</p>
+        <p class="small" style="margin-top:4px"><span class="stars">★</span> <b>${rating(m).toFixed(1)}</b> <span class="muted">(${m.reviews.length} reviews)</span></p></div></div>
+      <p class="headline">${esc(m.headline)}</p>
+      <div class="tags" style="margin-top:12px">${m.niches.map((s) => `<a class="chip" href="#niche-${s}">${NICHES.find((n) => n.slug === s).name}</a>`).join("")}</div>
+      <p class="bio">${esc(m.bio)}</p>
+      <h2 style="font-size:20px;margin-top:36px;margin-bottom:12px">Sessions</h2>
+      <div style="display:grid;gap:10px">${m.sessions.map((s) => `<div class="card sess"><div class="row"><span>${esc(s.title)}</span><span>${money(s.price)}</span></div><span class="muted small">${s.min} min · video call</span><span class="small">${esc(s.desc)}</span></div>`).join("")}</div>
+      <h2 style="font-size:20px;margin-top:36px">Reviews</h2>
+      <div>${m.reviews.map(([r, who, t]) => `<div class="review"><span class="small"><span class="stars">${starStr(r)}</span> <b>${who}</b></span><span class="small">${esc(t)}</span></div>`).join("")}</div>
+    </div>
+    <aside class="card book" id="bookCard">${bookCardHtml(m)}</aside>
+  </div>`;
+}
+
+function bookCardHtml(m) {
+  const s = m.sessions.find((x) => x.id === book.sid);
+  const days = slotsFor(m, s.min); const keys = Object.keys(days);
+  if (!book.day || !days[book.day]) book.day = keys[0] || null;
+  return `
+    <h2 style="font-size:18px">Book ${esc(m.name.split(" ")[0])}</h2>
+    ${m.sessions.length > 1 ? `<div style="display:grid;gap:8px">${m.sessions.map((x) => `<label class="opt ${x.id === book.sid ? "on" : ""}"><span><input type="radio" name="st" value="${x.id}" ${x.id === book.sid ? "checked" : ""}>${esc(x.title)}</span><b>${money(x.price)}</b></label>`).join("")}</div>` : ""}
+    <p class="muted small">${s.min} min · ${money(s.price)} · times in ${esc(tz.replace(/_/g, " "))}</p>
+    ${keys.length ? `<div class="days">${keys.map((k) => `<button type="button" class="day ${k === book.day ? "on" : ""}" data-day="${k}">${fmtDay(new Date(k))}</button>`).join("")}</div>
+    <div class="slots">${(days[book.day] || []).map((d) => `<button type="button" class="slot ${book.slot && book.slot.getTime() === d.getTime() ? "on" : ""}" data-slot="${d.getTime()}">${fmtTime(d)}</button>`).join("")}</div>` : `<p class="muted small">No open times in the next two weeks.</p>`}
+    ${book.slot ? `<form class="bookform" id="bookForm" novalidate>
+      <b class="small">${fmtDay(book.slot)} at ${fmtTime(book.slot)}</b>
+      <input class="input" id="bName" placeholder="Your name" value="Jamie Rivera" autocomplete="name">
+      <input class="input" id="bEmail" type="email" placeholder="Email for the invite" value="jamie@example.com" autocomplete="email">
+      <textarea class="input" id="bNotes" rows="3" placeholder="What do you want to get out of the call?">I'm a teacher moving into software engineering. Bootcamp done, no callbacks yet.</textarea>
+      <p class="err" id="bErr" hidden></p>
+      <button class="btn btn-primary btn-block">Continue to payment · ${money(s.price)}</button>
+      <p class="muted small" style="text-align:center">Full refund if you cancel at least 24h before.</p>
+    </form>` : ""}`;
+}
+
+function viewCheckout() {
+  const p = state.pending; if (!p) { location.hash = "home"; return ""; }
+  const fee = Math.round(p.price * FEE * 100) / 100;
+  return `<div class="narrow">
+    <div class="notice warn">Demo checkout. In the real product this is Stripe's hosted payment page. Nothing is charged.</div>
+    <form class="card" id="payForm" style="padding:22px;display:grid;gap:14px">
+      <div><p class="muted small">Pay Mentor Minutes</p><p style="font-family:var(--display);font-size:34px;font-weight:700">${money(p.price)}</p>
+      <p class="small">${esc(p.session)} with ${esc(p.mentorName)}<br><span class="muted">${fmtFull(p.start)}</span></p></div>
+      <div><label class="lbl" for="cc">Card number</label><input class="input" id="cc" value="4242 4242 4242 4242" inputmode="numeric"></div>
+      <div class="cardrow"><div><label class="lbl" for="exp">Expiry</label><input class="input" id="exp" value="12 / 29"></div><div><label class="lbl" for="cvc">CVC</label><input class="input" id="cvc" value="123"></div></div>
+      <div class="split"><div><span>Mentor receives</span><span>${money(p.price - fee)}</span></div><div><span>Platform fee (15%)</span><span>${money(fee)}</span></div></div>
+      <button class="btn btn-primary btn-block btn-lg" id="payBtn">Pay ${money(p.price)}</button>
+      <a class="nav-link small" style="text-align:center" href="#m-${p.mentor}">Cancel and go back</a>
+    </form></div>`;
+}
+
+function viewBooked() {
+  const b = state.booked[state.booked.length - 1]; if (!b) { location.hash = "home"; return ""; }
+  const m = MENTORS.find((x) => x.slug === b.mentor);
+  const r = state.rated[b.id];
+  return `<div class="narrow" style="max-width:620px">
+    <div class="notice good">You're booked! A calendar invite with the Google Meet link is on its way to ${esc(b.email)}.</div>
+    <div class="card" style="padding:22px;display:grid;gap:18px">
+      <div style="display:flex;gap:14px;align-items:center">${avatar(m.name, 56)}<div><p class="muted small">${esc(b.session)} with</p><a href="#m-${m.slug}" style="font-weight:600;font-size:17px;text-decoration:none">${esc(m.name)}</a></div><span class="badge">Confirmed</span></div>
+      <dl class="kv"><dt>When</dt><dd>${fmtFull(b.start)} · ${b.min} min</dd><dt>Paid</dt><dd>${money(b.price)}</dd><dt>Video link</dt><dd><span style="color:var(--accent)">${b.meet}</span></dd></dl>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" data-toast="In the live app this opens Google Meet.">Join call</button><button class="btn btn-secondary" data-toast="In the live app this downloads a calendar invite.">Add to calendar</button><button class="btn btn-danger" id="cancelBtn">Cancel for full refund</button></div>
+    </div>
+    <div class="card" style="padding:22px;display:grid;gap:12px">
+      <span class="eyebrow">After the call</span>
+      ${r ? `<p>Thanks! You rated this call ${r}/5. Your review now appears on ${esc(m.name.split(" ")[0])}'s profile.</p>` : `
+      <h3 style="font-size:18px">How was your call with ${esc(m.name.split(" ")[0])}?</h3>
+      <p class="muted small">Mentees get this prompt once the call ends. Only paid, completed calls can be reviewed.</p>
+      <div class="rate" id="rate">${[5, 4, 3, 2, 1].map((n) => `<button type="button" data-r="${n}" class="${n === 5 ? "on" : ""}" aria-label="${n} stars">${"★".repeat(n)}</button>`).join("")}</div>
+      <textarea class="input" id="revText" rows="2">Super actionable. Rewrote my resume bullets the same night.</textarea>
+      <button class="btn btn-secondary" id="revBtn" style="justify-self:start">Submit review</button>`}
+    </div></div>`;
+}
+
+function viewBecome() {
+  return `<div class="profile" style="grid-template-columns:minmax(0,1fr) 400px">
+    <div style="display:grid;gap:18px">
+      <h1 style="font-size:40px">Get paid for the advice you already give for free.</h1>
+      <div class="steps" style="grid-template-columns:1fr">
+        <div class="card"><b>Set your price</b><span class="muted small">Charge what a focused 20 minutes of your time is worth. Most mentors charge $30–$75.</span></div>
+        <div class="card"><b>Pick your hours</b><span class="muted small">Weekly availability in your timezone. Google Calendar sync means you're never double-booked.</span></div>
+        <div class="card"><b>Get paid automatically</b><span class="muted small">Mentees pay upfront. You keep 85%, paid to your bank by Stripe.</span></div>
+      </div>
+    </div>
+    <form class="card" id="signupForm" style="padding:22px;display:grid;gap:12px;align-self:start">
+      <h2 style="font-size:18px">Create your mentor account</h2>
+      <div><label class="lbl" for="sn">Full name</label><input class="input" id="sn" value="Maya Chen"></div>
+      <div><label class="lbl" for="se">Email</label><input class="input" id="se" type="email" value="maya@example.com"></div>
+      <div><label class="lbl" for="sp">Password</label><input class="input" id="sp" type="password" value="password123"></div>
+      <button class="btn btn-primary btn-block">Create mentor account</button>
+      <p class="muted small" style="text-align:center">Demo: this takes you to a sample dashboard.</p>
+    </form></div>`;
+}
+
+function viewDashboard() {
+  const tab = state.dashTab;
+  const tabs = [["overview", "Overview"], ["availability", "Availability"], ["sessions", "Sessions & pricing"], ["integrations", "Payments & calendar"]];
+  const maya = MENTORS[0];
+  const upcoming = [
+    ...state.booked.filter((b) => b.mentor === "maya-chen").map((b) => ({ mentee: b.name, email: b.email, session: b.session, price: b.price, start: b.start, notes: b.notes, isNew: true })),
+    ...SEED_CALLS.map((c) => { const d = new Date(); d.setDate(d.getDate() + c.offsetDays); d.setHours(c.hour, 0, 0, 0); return { ...c, start: d }; }),
+  ].sort((a, b) => a.start - b.start);
+  const gross = 45 * 18 + 60 * 6 + upcoming.reduce((a, c) => a + c.price, 0);
+  let body = "";
+  if (tab === "overview") body = `
+    <div><h1 style="font-size:28px">Hi Maya</h1><p class="muted small">Here's what's happening with your mentorship calls.</p></div>
+    <div class="card live"><div style="flex:1;min-width:0"><b class="small">You're live. Share your link in your community:</b><br><code>mentorminutes.app/m/maya-chen</code></div><button class="btn btn-secondary" id="copyBtn">Copy link</button></div>
+    <div class="stats">
+      <div class="card stat"><span class="eyebrow">You've earned</span><span class="v">${money(Math.round(gross * (1 - FEE)))}</span><span class="muted small">after 15% platform fee</span></div>
+      <div class="card stat"><span class="eyebrow">Paid sessions</span><span class="v">${24 + upcoming.length}</span><span class="muted small">since you joined</span></div>
+      <div class="card stat"><span class="eyebrow">Rating</span><span class="v"><span class="stars">★</span> ${rating(maya).toFixed(1)}</span><span class="muted small">${maya.reviews.length} reviews</span></div>
+    </div>
+    <section style="margin-top:0"><h2 style="font-size:18px;margin-bottom:12px">Upcoming calls</h2><div style="display:grid;gap:12px">
+      ${upcoming.map((c) => `<div class="card call"><div class="row"><div><b>${esc(c.mentee)}</b> <span class="muted">· ${esc(c.session)}</span>${c.isNew ? ` <span class="ok" style="margin-left:6px">New</span>` : ""}<br><span class="muted small">${fmtFull(c.start)} · ${esc(c.email)}</span></div>
+        <div style="display:flex;gap:8px"><button class="btn btn-primary" data-toast="In the live app this opens Google Meet.">Join</button><button class="btn btn-danger" data-toast="In the live app this cancels and refunds the mentee in full.">Cancel &amp; refund</button></div></div>
+        ${c.notes ? `<div class="note">${esc(c.notes)}</div>` : ""}</div>`).join("")}
+    </div></section>
+    <section style="margin-top:0"><h2 style="font-size:18px;margin-bottom:12px">Recent</h2><ul class="card list">
+      ${PAST.map(([n, s, r, ago]) => { const d = new Date(); d.setDate(d.getDate() - ago); return `<li><span>${n} · ${s}</span><span class="muted">${fmtDay(d)}${r ? ` · <span class="stars">${"★".repeat(r)}</span>` : " · awaiting review"}</span></li>`; }).join("")}
+    </ul></section>`;
+  if (tab === "availability") {
+    const names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    body = `<div><h1 style="font-size:28px">Availability</h1><p class="muted small">Weekly hours in America/Los Angeles. Busy events on your Google Calendar are blocked out automatically.</p></div>
+    <div class="card" style="padding:8px 20px"><div class="week">${names.map((n, i) => { const w = i < 4 ? ["5:00 PM – 8:00 PM"] : i === 5 ? ["9:00 AM – 12:00 PM"] : []; return `<div class="d"><b>${n}</b><span>${w.length ? w.map((x) => `<span class="win">${x}</span>`).join("") : `<span class="muted">Unavailable</span>`}</span></div>`; }).join("")}</div></div>
+    <div class="stats"><div class="card stat"><span class="eyebrow">Buffer between calls</span><span class="v">10 min</span></div><div class="card stat"><span class="eyebrow">Minimum notice</span><span class="v">12 hrs</span></div><div class="card stat"><span class="eyebrow">Book up to</span><span class="v">21 days</span></div></div>`;
+  }
+  if (tab === "sessions") body = `<div><h1 style="font-size:28px">Sessions &amp; pricing</h1><p class="muted small">You keep 85% of the price. The 15% platform fee covers payment processing, scheduling and getting you discovered.</p></div>
+    ${maya.sessions.map((s) => `<div class="card sess" style="padding:18px"><div class="row"><span>${esc(s.title)}</span><span>${money(s.price)}</span></div><span class="muted small">${s.min} min · you receive ${money(s.price * (1 - FEE))} per call</span><span class="small">${esc(s.desc)}</span></div>`).join("")}
+    <button class="btn btn-secondary" style="justify-self:start" data-toast="In the live app this adds a new session type.">+ Add session type</button>`;
+  if (tab === "integrations") body = `<h1 style="font-size:28px">Payments &amp; calendar</h1>
+    <div class="card integ"><div><b>Stripe payouts</b><span class="muted small">Mentees pay upfront. Stripe sends your 85% to your bank automatically and handles identity checks and tax forms.</span></div><span class="ok">Payouts enabled</span></div>
+    <div class="card integ"><div><b>Google Calendar &amp; Meet</b><span class="muted small">We check your calendar for conflicts, create the event with a Google Meet link, and invite the mentee automatically.</span></div><span class="ok">maya@gmail.com</span></div>`;
+  return `<div class="dash"><nav class="side">${tabs.map(([k, l]) => `<button type="button" data-tab="${k}" class="${k === tab ? "on" : ""}">${l}</button>`).join("")}<a class="nav-link small" style="padding:8px 12px;color:var(--accent)" href="#m-maya-chen">View public page →</a></nav><div style="display:grid;gap:24px;min-width:0">${body}</div></div>`;
+}
+
+/* ---------- Router ---------- */
+function render() {
+  const h = (location.hash || "#home").slice(1);
+  let html;
+  if (h === "mentors") html = viewMentors();
+  else if (h.startsWith("niche-")) html = viewMentors(h.slice(6));
+  else if (h.startsWith("m-")) html = viewMentor(h.slice(2));
+  else if (h === "checkout") html = viewCheckout();
+  else if (h === "booked") html = viewBooked();
+  else if (h === "become") html = viewBecome();
+  else if (h === "dashboard") html = viewDashboard();
+  else html = viewHome();
+  $("#view").innerHTML = html;
+  document.querySelectorAll("[data-nav]").forEach((a) => a.classList.toggle("on", h === a.dataset.nav || (a.dataset.nav === "mentors" && (h.startsWith("niche-") || h.startsWith("m-")))));
+}
+function goto(hash) { if (location.hash === "#" + hash) { render(); } else { location.hash = hash; } window.scrollTo(0, 0); }
+window.addEventListener("hashchange", () => { render(); window.scrollTo(0, 0); });
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button, [data-toast]"); if (!t) return;
+  if (t.dataset.toast) { toast(t.dataset.toast); return; }
+  if (t.dataset.day) { book.day = t.dataset.day; book.slot = null; refreshBook(); return; }
+  if (t.dataset.slot) { book.slot = new Date(Number(t.dataset.slot)); refreshBook(); return; }
+  if (t.dataset.tab) { state.dashTab = t.dataset.tab; render(); return; }
+  if (t.dataset.r) { document.querySelectorAll("#rate button").forEach((b) => b.classList.toggle("on", b === t)); return; }
+  if (t.id === "revBtn") { const b = state.booked[state.booked.length - 1]; const r = Number($("#rate .on").dataset.r); state.rated[b.id] = r;
+    const m = MENTORS.find((x) => x.slug === b.mentor); m.reviews.unshift([r, b.name.split(" ")[0], $("#revText").value.trim() || "Great call."]); render(); toast("Review posted"); return; }
+  if (t.id === "cancelBtn") { const b = state.booked.pop(); toast(`Cancelled. ${money(b.price)} refunded to the card.`); goto("m-" + b.mentor); return; }
+  if (t.id === "copyBtn") { navigator.clipboard?.writeText("https://mentorminutes.app/m/maya-chen").then(() => toast("Link copied"), () => toast("mentorminutes.app/m/maya-chen")); return; }
+  if (t.id === "resetBtn") { state.pending = null; state.booked = []; state.rated = {}; state.dashTab = "overview"; book.slug = null; viewMentors.q = ""; goto("home"); toast("Demo reset"); }
+});
+document.addEventListener("change", (e) => { if (e.target.name === "st") { book.sid = e.target.value; book.slot = null; refreshBook(); } });
+document.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const f = e.target;
+  if (f.id === "searchForm") { viewMentors.q = $("#q").value.trim(); render(); return; }
+  if (f.id === "signupForm") { goto("dashboard"); toast("Account created. This is a sample dashboard."); return; }
+  if (f.id === "bookForm") {
+    const name = $("#bName").value.trim(), email = $("#bEmail").value.trim();
+    const err = $("#bErr");
+    if (name.length < 2 || !/^\S+@\S+\.\S+$/.test(email)) { err.textContent = "Enter your name and a valid email so we can send the invite."; err.hidden = false; return; }
+    const m = MENTORS.find((x) => x.slug === book.slug); const s = m.sessions.find((x) => x.id === book.sid);
+    state.pending = { mentor: m.slug, mentorName: m.name, session: s.title, min: s.min, price: s.price, start: book.slot, name, email, notes: $("#bNotes").value.trim() };
+    goto("checkout"); return;
+  }
+  if (f.id === "payForm") {
+    const btn = $("#payBtn"); btn.disabled = true; btn.textContent = "Processing…";
+    setTimeout(() => {
+      const p = state.pending; state.pending = null;
+      const code = Math.random().toString(36).slice(2, 5) + "-" + Math.random().toString(36).slice(2, 6) + "-" + Math.random().toString(36).slice(2, 5);
+      state.booked.push({ ...p, id: Date.now(), meet: "meet.google.com/" + code });
+      book.slot = null; goto("booked");
+    }, 900);
+  }
+});
+function refreshBook() { const m = MENTORS.find((x) => x.slug === book.slug); const c = $("#bookCard"); if (m && c) c.innerHTML = bookCardHtml(m); }
+
+render();
+</script>
