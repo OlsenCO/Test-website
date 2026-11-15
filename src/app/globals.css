@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fbfaf7;
+  --surface: #ffffff;
+  --foreground: #1c1917;
+  --muted: #78716c;
+  --line: #e7e5e4;
+  --accent: #0f766e;
+  --accent-ink: #ffffff;
+  --accent-soft: #ccfbf1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0c0a09;
+    --surface: #1c1917;
+    --foreground: #f5f5f4;
+    --muted: #a8a29e;
+    --line: #292524;
+    --accent: #2dd4bf;
+    --accent-ink: #042f2e;
+    --accent-soft: #134e4a;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@utility btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@utility btn-primary {
+    @apply btn bg-accent text-accent-ink hover:opacity-90;
+}
+
+@utility btn-secondary {
+    @apply btn border border-line bg-surface hover:bg-background;
+}
+
+@utility btn-danger {
+    @apply btn border border-red-300 text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950;
+}
+
+@utility input {
+    @apply w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20;
+}
+
+@utility label {
+    @apply mb-1 block text-sm font-medium;
+}
+
+@utility card {
+    @apply rounded-2xl border border-line bg-surface;
+}
+
+@utility chip {
+    @apply inline-flex items-center rounded-full border border-line px-3 py-1 text-xs font-medium;
+}

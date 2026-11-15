@@ -1,0 +1,160 @@
+// SQLite for local dev. For production switch provider to "postgresql"
+// and point DATABASE_URL at your database (no other changes needed).
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime       @default(now())
+  sessions     Session[]
+  mentor       MentorProfile?
+}
+
+model Session {
+  id        String   @id // random token stored in the cookie (hashed)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Category {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  name        String
+  tagline     String
+  description String
+  mentors     MentorProfile[]
+}
+
+model MentorProfile {
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug      String  @unique
+  headline  String  @default("")
+  bio       String  @default("")
+  company   String  @default("")
+  avatarUrl String  @default("")
+  linkedinUrl String @default("")
+  timezone  String  @default("America/New_York")
+  published Boolean @default(false)
+
+  // Scheduling rules
+  bufferMinutes  Int @default(10)
+  minNoticeHours Int @default(12)
+  maxDaysAhead   Int @default(21)
+
+  // Stripe Connect (Express)
+  stripeAccountId      String?
+  stripeChargesEnabled Boolean @default(false)
+  stripeDetailsSubmitted Boolean @default(false)
+
+  // Google Calendar
+  googleEmail        String?
+  googleRefreshToken String?
+  googleCalendarId   String  @default("primary")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categories   Category[]
+  sessionTypes SessionType[]
+  availability AvailabilityRule[]
+  bookings     Booking[]
+  reviews      Review[]
+}
+
+model SessionType {
+  id              String        @id @default(cuid())
+  mentorId        String
+  mentor          MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  title           String
+  description     String        @default("")
+  durationMinutes Int           @default(20)
+  priceCents      Int
+  currency        String        @default("usd")
+  active          Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  bookings        Booking[]
+
+  @@index([mentorId])
+}
+
+// Weekly recurring window in the mentor's own timezone.
+model AvailabilityRule {
+  id          String        @id @default(cuid())
+  mentorId    String
+  mentor      MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  weekday     Int // 1 = Monday ... 7 = Sunday (ISO, matches Luxon)
+  startMinute Int // minutes after local midnight
+  endMinute   Int
+
+  @@index([mentorId])
+}
+
+// status: PENDING_PAYMENT | CONFIRMED | CANCELLED | EXPIRED
+model Booking {
+  id            String        @id @default(cuid())
+  mentorId      String
+  mentor        MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  sessionTypeId String
+  sessionType   SessionType   @relation(fields: [sessionTypeId], references: [id])
+
+  menteeName  String
+  menteeEmail String
+  menteeNotes String @default("")
+
+  startAt DateTime
+  endAt   DateTime
+  status  String   @default("PENDING_PAYMENT")
+  holdExpiresAt DateTime?
+
+  priceCents       Int
+  platformFeeCents Int
+  currency         String
+
+  stripeCheckoutSessionId String? @unique
+  stripePaymentIntentId   String?
+  refunded                Boolean @default(false)
+
+  meetingUrl      String?
+  calendarEventId String?
+
+  // Secret for the mentee's manage/review links (no account needed to book).
+  accessToken String @unique
+
+  cancelledBy String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  review Review?
+
+  @@index([mentorId, startAt])
+  @@index([status])
+}
+
+model Review {
+  id         String        @id @default(cuid())
+  bookingId  String        @unique
+  booking    Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  mentorId   String
+  mentor     MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  rating     Int // 1-5
+  comment    String        @default("")
+  authorName String
+  createdAt  DateTime      @default(now())
+
+  @@index([mentorId])
+}
